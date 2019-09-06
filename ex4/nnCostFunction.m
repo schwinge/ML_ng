@@ -23,7 +23,7 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
                  num_labels, (hidden_layer_size + 1));
 
 % Setup some useful variables
-m = size(X, 1);
+m = size(X, 1);  %5000
          
 % You need to return the following variables correctly 
 J = 0;
@@ -64,29 +64,43 @@ Theta2_grad = zeros(size(Theta2));
 
 
 X = [ones(m,1) X];   %5000*401
-a1 = X*Theta1'
+a1 = X*Theta1';
 z1 = sigmoid(a1);    %5000*25
 a2 = [ones(size(z1,1),1) z1];    %5000*26
 a2 = a2*Theta2';    %5000*10
 h = sigmoid(a2);    %5000*10
 
 for i = 1:num_labels,
-    yk(i,:) = (y==i);
+    yk(i,:) = (y==i);    %10*5000
 end
 
 Theta1Reg = Theta1(:,2:size(Theta1,2));
 Theta2Reg = Theta2(:,2:size(Theta2,2));
 Reg = lambda/(2*m)*(sum(sum(Theta1Reg.^2))+sum(sum(Theta2Reg.^2)));
-J = sum(sum(-yk'.*log(h)-(1-yk)'.*log(1-h)))/m; %y'; 10*5000
+J = sum(sum(-yk'.*log(h)-(1-yk)'.*log(1-h)))/m; %y'; 5000*10 .8 element by element
 
 J = J+Reg;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-
-
+for t = 1:m,    %1:5000
+    a1 = X(t,:);
+    z2 = X*Theta1';
+    a2 = sigmoid(z2);
+    a2 = [1; a2];
+    z3 = a2*Theta2';
+    a3 = sigmoid(z3);
+    
+    d3 = a3 - yk(:,t);
+    
+    z2 = [1; z2];
+    d2 = Theta2'*d3.*sigmoidGradient(z2);
+    d2 = d2(2:end);
+    
+    
+    
+    
+end
 
 
 
